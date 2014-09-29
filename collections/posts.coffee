@@ -1,21 +1,29 @@
 this.Posts = new Meteor.Collection('posts')
 
-# Meteor.methods
-  # post: (postAttributes) ->
-  #   user = Meteor.user()
-  #   postWithSameLink = Posts.findOne({url: postAttributes.url})
+Posts.allow
+  update: ownsDocument
+  remove: ownsDocument
 
-    # if !user
-    #   throw new Meteor.Error(401, "You need to log in to post new stories")
-    # if !postAttributes.title
-    #   throw new Meteor.Error(422, "Please fill in a headline")
-    # if postAttributes.url && postWithSameLink
-    #   throw new Meteor.Error(302, "This link has already been posted", postWithSameLink._id)
+Posts.deny
+  update: (userId, post, fieldNames) ->
+    _.without(fieldNames, 'url', 'title').length > 0
 
-    # post = _.extend(
-    #   _.pick(postAttributes, 'url', 'title', 'message'),
-    #   { userId: user._id, author: user.username, submitted: new Date().getTime() }
-    # )
+Meteor.methods
+  post: (postAttributes) ->
+    user = Meteor.user()
+    postWithSameLink = Posts.findOne({url: postAttributes.url})
 
-    # Posts.insert(post)
+    if !user
+      throw new Meteor.Error(401, "You need to log in to post new stories")
+    if !postAttributes.title
+      throw new Meteor.Error(422, "Please fill in a headline")
+    if postAttributes.url && postWithSameLink
+      throw new Meteor.Error(302, "This link has already been posted", postWithSameLink._id)
+
+    post = _.extend(
+      _.pick(postAttributes, 'url', 'title', 'message'),
+      { userId: user._id, author: user.username, submitted: new Date().getTime() }
+    )
+
+    Posts.insert(post)
 
