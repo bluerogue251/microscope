@@ -1,17 +1,52 @@
 if Posts.find().count() is 0
-  Posts.insert
+  now = new Date().getTime()
+
+  tomId = Meteor.users.insert
+    profile:
+      name: 'Tom Coleman'
+  tom = Meteor.users.findOne(tomId)
+
+  sachaId = Meteor.users.insert
+    profile:
+      name: 'Sacha Greif'
+  sacha = Meteor.users.findOne(sachaId)
+
+  telescopeId = Posts.insert
     title: 'Introducing Telescope'
-    author: 'Sacha Greif'
+    userId: sachaId
+    author: sacha.profile.name
     url: 'http://sachagreif.com/introducing-telescope/'
+    submitted: now - 7 * 3600 * 1000
+    commentsCount: 2
+
+  Comments.insert
+    postId: telescopeId
+    userId: tomId
+    author: tom.profile.name
+    submitted: now - 5 * 3600 * 1000
+    body: 'Interesting project Sacha, how can I get involved'
+
+  Comments.insert
+    postId: telescopeId
+    userId: sachaId
+    author: sacha.profile.name
+    submitted: now - 3 * 3600 * 1000
+    body: 'You sure can, Tom!'
 
   Posts.insert
     title: 'Meteor'
-    author: 'Tom Coleman'
+    userId: tomId
+    author: tom.profile.name
     url: 'http://meteor.com'
+    submitted: now - 10 * 3600 * 1000
+    commentsCount: 0
 
   Posts.insert
     title: 'The Meteor Book'
-    author: 'Tom Coleman'
+    userId: tomId
+    author: tom.profile.name
     url: 'http://themeteorbook.com'
+    submitted: now - 12 * 3600 * 1000
+    commentsCount: 0
 
 

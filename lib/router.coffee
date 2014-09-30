@@ -5,7 +5,13 @@ Router.configure
 
 Router.map ->
   this.route 'postsList',  { path: '/' }
-  this.route 'postPage',   { path: '/posts/:_id', data: -> Posts.findOne(this.params._id) }
+  this.route 'postPage',
+    {
+      path: '/posts/:_id'
+      waitOn: ->
+        Meteor.subscribe('comments', this.params._id)
+      data: -> Posts.findOne(this.params._id)
+    }
   this.route 'postEdit',   { path: '/posts/:_id/edit', data: -> Posts.findOne(this.params._id) }
   this.route 'postSubmit', { path: '/submit' }
 
