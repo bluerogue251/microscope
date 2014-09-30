@@ -1,7 +1,7 @@
 Router.configure
   layoutTemplate: 'layout'
   loadingTemplate: 'loading'
-  waitOn: -> Meteor.subscribe('posts')
+  waitOn: -> [Meteor.subscribe('posts'), Meteor.subscribe('notifications')]
 
 Router.map ->
   this.route 'postsList',  { path: '/' }
